@@ -600,3 +600,55 @@ body,
     border-top-color: rgba(20,20,28,.075);
   }
 }
+
+
+/* FINAL HEADLINE SPACING FIX */
+.hero h1 {
+  font-size: clamp(62px, 6.4vw, 100px) !important;
+  line-height: 1 !important;
+  letter-spacing: -.045em !important;
+  display: grid;
+  gap: .035em;
+  max-width: 760px;
+}
+.hero h1 span {
+  display: block;
+  line-height: 1 !important;
+}
+
+.section-intro h2,
+.workspace-heading h2,
+.next-actions h2,
+.report-header h2,
+.bottom-cta h2 {
+  line-height: 1.12 !important;
+  letter-spacing: -.035em !important;
+}
+
+.section-intro h2 {
+  font-size: clamp(42px, 4.8vw, 68px) !important;
+}
+
+.workspace-heading h2,
+.next-actions h2 {
+  font-size: clamp(44px, 4.6vw, 66px) !important;
+}
+
+.bottom-cta h2 {
+  font-size: clamp(50px, 5.8vw, 82px) !important;
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: clamp(54px, 15vw, 76px) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -.04em !important;
+    gap: .045em;
+  }
+  .section-intro h2,
+  .workspace-heading h2,
+  .bottom-cta h2 {
+    line-height: 1.14 !important;
+    letter-spacing: -.03em !important;
+  }
+}
