@@ -18,14 +18,10 @@ const trades = [
 const requirementTicker = [
   'BID DUE',
   'SITE WALK',
-  'BID BOND',
+  'BONDING',
   'INSURANCE',
-  'PREVAILING WAGE',
   'ADDENDA',
-  'REQUIRED FORMS',
-  'RFI DEADLINE',
   'SUBMISSION',
-  'ALTERNATES',
 ];
 
 type ParsedDocument = {
@@ -83,7 +79,7 @@ function DepthField() {
     let pointerY = 0;
 
     type Particle = { x: number; y: number; z: number; size: number; speed: number };
-    const particles: Particle[] = Array.from({ length: 115 }, (_, index) => ({
+    const particles: Particle[] = Array.from({ length: 58 }, (_, index) => ({
       x: Math.sin(index * 91.7) * 560,
       y: Math.cos(index * 43.1) * 390,
       z: 100 + ((index * 83) % 900),
@@ -109,8 +105,8 @@ function DepthField() {
     const draw = () => {
       frame += 1;
       context.clearRect(0, 0, width, height);
-      const cx = width * 0.65 + pointerX * 24;
-      const cy = height * 0.48 + pointerY * 18;
+      const cx = width * 0.65 + pointerX * 12;
+      const cy = height * 0.48 + pointerY * 9;
       const projected: Array<{ x: number; y: number; a: number; size: number }> = [];
 
       for (const particle of particles) {
@@ -123,9 +119,9 @@ function DepthField() {
         const sin = Math.sin(orbit);
         const rx = particle.x * cos - particle.y * sin;
         const ry = particle.x * sin + particle.y * cos;
-        const x = cx + rx * perspective + pointerX * (1000 - particle.z) * 0.035;
-        const y = cy + ry * perspective + pointerY * (1000 - particle.z) * 0.025;
-        const alpha = Math.min(0.7, Math.max(0.05, (1000 - particle.z) / 1200));
+        const x = cx + rx * perspective + pointerX * (1000 - particle.z) * 0.018;
+        const y = cy + ry * perspective + pointerY * (1000 - particle.z) * 0.013;
+        const alpha = Math.min(0.36, Math.max(0.03, (1000 - particle.z) / 1900));
         const size = particle.size * perspective * 1.5;
 
         projected.push({ x, y, a: alpha, size });
@@ -137,15 +133,15 @@ function DepthField() {
 
       context.lineWidth = 0.7;
       for (let i = 0; i < projected.length; i += 1) {
-        for (let j = i + 1; j < Math.min(projected.length, i + 8); j += 1) {
+        for (let j = i + 1; j < Math.min(projected.length, i + 5); j += 1) {
           const a = projected[i];
           const b = projected[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 92) {
+          if (dist < 82) {
             context.beginPath();
-            context.strokeStyle = `rgba(92, 192, 255, ${(1 - dist / 92) * 0.12})`;
+            context.strokeStyle = `rgba(92, 192, 255, ${(1 - dist / 82) * 0.055})`;
             context.moveTo(a.x, a.y);
             context.lineTo(b.x, b.y);
             context.stroke();
@@ -175,7 +171,6 @@ function HeroVisual() {
   return (
     <div className="hero-visual" aria-hidden="true">
       <div className="orbit orbit-one" />
-      <div className="orbit orbit-two" />
       <div className="doc-stage">
         <div className="doc-shadow" />
         <div className="doc-sheet doc-sheet-back">
@@ -194,8 +189,6 @@ function HeroVisual() {
           <div className="scan-line" />
         </div>
         <div className="float-chip chip-one"><span /> Page-level citations</div>
-        <div className="float-chip chip-two"><b>312</b> pages scanned</div>
-        <div className="float-chip chip-three">NOT FOUND ≠ guessed</div>
       </div>
     </div>
   );
@@ -304,10 +297,10 @@ export default function Home() {
           <HeroVisual />
         </div>
 
-        <div className="ticker" aria-hidden="true">
-          <div className="ticker-track">
-            {[...requirementTicker, ...requirementTicker].map((item, index) => (
-              <span key={`${item}-${index}`}><i />{item}</span>
+        <div className="requirements-rail" aria-hidden="true">
+          <div className="shell requirements-rail-inner">
+            {requirementTicker.map((item) => (
+              <span key={item}><i />{item}</span>
             ))}
           </div>
         </div>
