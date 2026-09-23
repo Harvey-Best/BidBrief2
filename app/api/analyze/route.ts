@@ -128,10 +128,43 @@ SUPPLIED DOCUMENT TEXT:${corpus}`,
     return Response.json(output);
   } catch (error) {
     console.error('BidBrief analysis failed:', error);
+
+    const message = error instanceof Error ? error.message : String(error);
+
+    if (
+      message.includes('requires a valid credit card') ||
+      message.includes('customer_verification_required')
+    ) {
+      return Response.json(
+        {
+          error:
+            'BidBrief is ready, but Vercel AI Gateway is blocked until billing verification is completed on the Vercel team. Add a valid payment method in Vercel AI Gateway, then retry this same PDF.',
+          code: 'AI_GATEWAY_BILLING_REQUIRED',
+        },
+        { status: 503 },
+      );
+    }
+
+    if (
+      message.includes('AI_GATEWAY_API_KEY') ||
+      message.toLowerCase().includes('unauthorized') ||
+      message.includes('401')
+    ) {
+      return Response.json(
+        {
+          error:
+            'The AI Gateway credentials are missing or invalid. Check AI_GATEWAY_API_KEY in the Vercel project environment variables, redeploy, and try again.',
+          code: 'AI_GATEWAY_AUTH_ERROR',
+        },
+        { status: 503 },
+      );
+    }
+
     return Response.json(
       {
         error:
-          'Analysis failed. Check your AI Gateway configuration and try again with a smaller or text-based PDF.',
+          'BidBrief could not complete this analysis. The PDF was read successfully, but the AI analysis service returned an error. Please retry in a moment.',
+        code: 'ANALYSIS_SERVICE_ERROR',
       },
       { status: 500 },
     );
